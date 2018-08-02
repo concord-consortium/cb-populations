@@ -212,18 +212,7 @@ class App extends React.Component<IAppProps, IAppState> {
                                     interactive={interactive}
                                     onSetInteractive={this.handleSetInteractive}/>
           </div>
-          <div className="controls-column">
-            <PlantingControls year={simulationYear + 1}
-                              isRunning={this.state.isRunning}
-                              showSpidersOption={this.showSpidersOption()}
-                              onTogglePlayPause={this.handlePlayPauseClick}
-                              onReset={this.handleResetClick}/>
-            {isInConfigurationMode ? <MultiTraitPanel /> : null}
-            {!isInConfigurationMode ? cornChart : null}
-            {!isInConfigurationMode ? wormChart : null}
-          </div>
         </div>
-        <SimulationStatistics simulationState={simulationState} simulationHistory={this.simulationHistory}/>
         <Attribution />
         {initialDialog}
         {endSeasonDialog}

@@ -34,7 +34,7 @@ declare namespace Populations {
     setEnvironmentProperty(prop: string, value: any): void;
   
     getImages(opts: any): any;
-  
+    getAlleleString(): string;
     getSize(): number;
   
     isDead: boolean;
@@ -42,7 +42,7 @@ declare namespace Populations {
   
     step(): void;
   
-    makeNewBorn(): void;
+    makeNewborn(): void;
   
     reproduce(mate: Agent): void;
     createOffspring(mate: Agent): Agent;
@@ -73,6 +73,8 @@ declare namespace Populations {
     _viewLayer: number;
     _hasEatenOnce: boolean;
     _timeLastMated: number;
+    label: string;
+    organism: Agent;
 
     static BEHAVIOR: {
       EATING: string,
@@ -84,22 +86,25 @@ declare namespace Populations {
 
     constructor(args: any);
 
-    makeNewBorn(): void;
+    makeNewborn(): void;
 
     step(): void;
 
     eat(): void;
     flee(): void;
     mate(): void;
-    wander(speed: number): void;
+    wander(speed?: number): void;
     chase(agentDistance: AgentDistance): void;
     runFrom(agentDistance: AgentDistance): void;
     move(speed: number): void;
+    resetGeneticTraits(): void;
 
     _direction(from: Location, to: Location): number;
     _eatPrey(agent: Agent): void;
     _setSpeedAppropriateForAge(): void;
     _depleteEnergy(): void;
+    _incrementAge(): void;
+    _checkSurvival(): void;
     _hunger(): number;
     _fear(): number;
     _desireToMate(): number;
@@ -117,6 +122,7 @@ declare namespace Populations {
     _distanceSquared(p1: Location, p2: Location): number;
 
     _getSurvivalChances(): number;
+    _genomeButtonsString(): string;
   }
   
   export class BasicPlant extends Agent {
@@ -126,7 +132,7 @@ declare namespace Populations {
 
     getSize(): number;
 
-    makeNewBorn(): void;
+    makeNewborn(): void;
 
     createSeeds(): void;
 
@@ -140,7 +146,7 @@ declare namespace Populations {
 
     getSize(): number;
 
-    makeNewBorn(): void;
+    makeNewborn(): void;
 
     step(): void;
 
@@ -234,6 +240,7 @@ declare namespace Populations {
     speciesName: string;
     individualName: string;
     agentClass: any;
+    geneticSpecies: any;
     traits: Trait[];
     viewLayer: any;
     imageProperties: any;
@@ -245,6 +252,7 @@ declare namespace Populations {
         speciesName: string,
         individualName?: string,
         agentClass: any,
+        geneticSpecies?: any,
         traits: Trait[],
         viewLayer?: any,
         imageProperties?: any,
@@ -280,6 +288,8 @@ declare namespace Populations {
     default: ITraitValue;
     float: boolean;
     mutatable: boolean;
+    isGenetic?: boolean;
+    isNumeric?: boolean;
 
     constructor(traitDesc: {
         name: string,
@@ -288,7 +298,9 @@ declare namespace Populations {
         max?: number,
         default?: ITraitValue,
         float?: boolean,
-        mutatable?: boolean
+        mutatable?: boolean,
+        isGenetic?: boolean,
+        isNumeric?: boolean
     });
   
     getDefaultValue(): ITraitValue;

@@ -12,10 +12,10 @@
   max-width: 470px; /* hard-coded for now to fix Firefox layout issue */
 }
 
-/* hide the populations.js toolbar */
+/* hide the populations.js toolbar 
 #environment .toolbar {
   display: none;
-}
+}*/
 
 .controls-column {
   font-size: 1em;

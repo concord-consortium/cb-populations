@@ -2,6 +2,8 @@ import { corn } from './species/corn';
 import { spider } from './species/spider';
 import { worm, wormLifestage, getWormLifestage } from './species/rootworm';
 import { wormEgg } from './species/worm-egg';
+import { Rabbits } from './species/rabbits';
+import { Hawks } from './species/hawks';
 import { Agent, Environment, Rule, Interactive } from './populations';
 import { variedPlants } from './species/varied-plants';
 
@@ -39,6 +41,16 @@ const interactive = new Interactive({
       species: wormEgg,
       limit: 20,
       imagePath: require('./images/rootworm-mature.png')
+    },
+    {
+      species: Rabbits,
+      limit: 20,
+      imagePath: require('./images/sandrat-light.png')
+    },
+    {
+      species: Hawks,
+      limit: 20,
+      imagePath: require('./images/hawk.png')
     }
   ]
 });
@@ -261,5 +273,6 @@ export function initCornModel(simulationElt: HTMLElement | null, params?: IModel
     }
   }));
 
+  (<any>window).model = interactive;
   return interactive;
 }

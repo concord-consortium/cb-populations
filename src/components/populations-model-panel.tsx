@@ -21,7 +21,7 @@ export default class PopulationsModelPanel extends React.Component<IProps, IStat
         </div>
         {populationsModel}
         <div id="env-controls">
-          <div id="switch-controls" hidden={false}>
+          <div id="switch-controls" hidden={true}>
             <button id="switch-env">Switch Environments</button>
           </div>
           <div id="overlay-controls">

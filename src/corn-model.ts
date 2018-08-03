@@ -171,7 +171,7 @@ EnvironmentView.prototype.addMouseHandlers = function() {
       action: (function(_this) {
         return function(agent) {
           var brownness, envIndex;
-          if (agent.species === this.rabbitSpecies) {
+          if (agent.species === _this.rabbitSpecies) {
             envIndex = _this.getAgentEnvironmentIndex(agent);
             brownness = _this.envColors[envIndex] === 'brown';
             if (agent.get('color') === 'brown') {
@@ -187,7 +187,7 @@ EnvironmentView.prototype.addMouseHandlers = function() {
       action: (function(_this) {
         return function(agent) {
           var envIndex, overcrowded, population;
-          if (agent.species === this.rabbitSpecies) {
+          if (agent.species === _this.rabbitSpecies) {
             if (agent._y < _this.env.height / 4) {
               agent.set("is immortal", true);
               envIndex = _this.getAgentEnvironmentIndex(agent);

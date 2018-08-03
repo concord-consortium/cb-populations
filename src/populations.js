@@ -17,5 +17,8 @@ module.exports = {
     // UI
     Interactive: require_brunch('ui/interactive'),
     Toolbar: require_brunch('ui/toolbar'),
-    ToolButton: require_brunch('ui/tool-button')
+    ToolButton: require_brunch('ui/tool-button'),
+
+    EnvironmentView: require_brunch('views/environment-view'),
+    Events: require_brunch('events')
 };

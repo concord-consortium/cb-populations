@@ -50,6 +50,8 @@ declare namespace Populations {
     canShowInfo(): boolean;
   
     zIndex(): number;
+
+    canBeCarried(): boolean;
   }
 
   export interface AgentDistance {
@@ -153,6 +155,10 @@ declare namespace Populations {
     _checkSurvival(): void;
   }
 
+  export class EnvironmentView {
+    addMouseHandlers(): void;
+  },
+
   export class Environment {
     cells: any[];
     agents: Agent[];
@@ -173,6 +179,7 @@ declare namespace Populations {
       SEASON_CHANGED: string,
       USER_REMOVED_AGENTS: string
     };
+    static DEFAULT_RUN_LOOP_DELAY: number;
   
     constructor(opts: any);
   
@@ -315,6 +322,8 @@ declare namespace Populations {
     species: Species;
     limit: number;
     imagePath: string;
+    traits: ITraitValue[];
+    scatter: boolean;
   }
 
   export interface IToolButtonSpec {
@@ -363,9 +372,10 @@ declare namespace Populations {
   }
 
   export class ToolButton {
+    _states: any;
     static INFO_TOOL: string;
     static CARRY_TOOL: string;
-  
+
     constructor(environment: Environment, toolbar: Toolbar, specs: { type: string });
 
     render(): void;

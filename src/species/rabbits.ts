@@ -15,7 +15,7 @@ class Rabbit extends BasicAnimal {
     this._closestAgents = null;
     this._setSpeedAppropriateForAge();
     this._depleteEnergy();
-    if (this.get('age') > this.species.defs.MATURITY_AGE) { // && Math.random() < this.get('mating chance')) {
+    if (this.get('age') > this.species.defs.MATURITY_AGE && Math.random() < this.get('mating chance')) {
       this.mate();
     } else {
       this.wander();
@@ -27,7 +27,7 @@ class Rabbit extends BasicAnimal {
   makeNewborn() {
     super.makeNewborn();
     const model = (<any>window).model;
-    var sex = model.environment.agents.length && model.environment.agents[model.environment.agents.length - 1].species.speciesName === "rabbits" && model.environment.agents[model.environment.agents.length - 1].get("sex") === "female" ? "male" : "female";
+    var sex = model.env.agents.length && model.env.agents[model.env.agents.length - 1].species.speciesName === "rabbits" && model.env.agents[model.env.agents.length - 1].get("sex") === "female" ? "male" : "female";
     this.set('sex', sex);
     return this.set('age', Math.round(Math.random() * 5));
   };
@@ -124,7 +124,7 @@ export const Rabbits = new Species({
       rules: [
         {
           image: {
-            path: "../images/overlays/male-stack.png",
+            path: require('../images/overlays/male-stack.png'),
             scale: 0.4,
             anchor: {
               x: 0.75,
@@ -136,7 +136,7 @@ export const Rabbits = new Species({
           }
         }, {
           image: {
-            path: "../images/overlays/female-stack.png",
+            path: require('../images/overlays/female-stack.png'),
             scale: 0.4,
             anchor: {
               x: 0.75,
@@ -154,7 +154,7 @@ export const Rabbits = new Species({
       rules: [
         {
           image: {
-            path: "../images/overlays/heterozygous-stack.png",
+            path: require('../images/overlays/heterozygous-stack.png'),
             scale: 0.4,
             anchor: {
               x: 0.75,

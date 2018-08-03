@@ -9,7 +9,7 @@ export default class PopulationsModelPanel extends React.Component<IProps, IStat
   public render() {
     const populationsModel = <PopulationsModel />;
     return (
-      <div>
+      <div id="model-panel">
         <div id="color-controls" hidden={true}>
           % Brown: <input id="starting-brown" value={50} />
           % White: <input id="starting-white" value={50} />

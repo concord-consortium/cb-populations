@@ -324,9 +324,9 @@ EnvironmentView.prototype.addMouseHandlers = function() {
   },
   setupGraphs: function() {
     this.graphData = {};
-    this.createGraphForEnvs("Mouse Colors", "Time (s)", "Number of Mice", [[153, 153, 153], [153, 85, 0]], ["Light mice", "Dark mice"], "color-graph", this.graphRabbitColors, "graph-colors", ["graph-alleles", "graph-genotypes"]);
-    this.createGraphForEnvs("Mouse Genotypes", "Time (s)", "Number of Mice", [[242, 203, 124], [170, 170, 170], [85, 85, 85]], ["bb mice", "bB mice", "BB mice"], "genotype-graph", this.graphRabbitGenotypes, "graph-genotypes", ["graph-alleles", "graph-colors"]);
-    this.createGraphForEnvs("Mouse Alleles", "Time (s)", "Number of Alleles", [[153, 153, 153], [153, 85, 0]], ["b alleles", "B alleles"], "allele-graph", this.graphRabbitAlleles, "graph-alleles", ["graph-colors", "graph-genotypes"]);
+    this.createGraphForEnvs("Mouse Colors", "Time (s)", "Number of Mice", ["#999999", "#995500"], ["Light mice", "Dark mice"], "color-graph", this.graphRabbitColors, "graph-colors", ["graph-alleles", "graph-genotypes"]);
+    this.createGraphForEnvs("Mouse Genotypes", "Time (s)", "Number of Mice", ["#F2CB7C","#AAAAAA", "#555555"], ["bb mice", "bB mice", "BB mice"], "genotype-graph", this.graphRabbitGenotypes, "graph-genotypes", ["graph-alleles", "graph-colors"]);
+    this.createGraphForEnvs("Mouse Alleles", "Time (s)", "Number of Alleles", ["#999999", "#995500"], ["b alleles", "B alleles"], "allele-graph", this.graphRabbitAlleles, "graph-alleles", ["graph-colors", "graph-genotypes"]);
     return document.getElementById("graph-colors").click();
   },
   createGraphForEnvs: function(title, xLabel, yLabel, colors, seriesNames, graphId, counter, showButton, hideButtons) {
@@ -392,7 +392,7 @@ EnvironmentView.prototype.addMouseHandlers = function() {
               seriesText = document.createTextNode(series);
               seriesDiv = document.createElement("div");
               seriesDiv.className = "legend";
-              seriesDiv.style.color = "rgb( " + colors[i].join(",") + ")";
+              seriesDiv.style.color = colors[i];
               seriesDiv.appendChild(seriesText);
               return containerDiv.appendChild(seriesDiv);
             });

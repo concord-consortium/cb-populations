@@ -1,0 +1,21 @@
+.simulation-stats {
+  font-size: 1em;
+  display: flex;
+  flex-direction: row;
+}
+
+.simulation-stats .column-header {
+  padding-left: 6px;
+  background-color: lightgray;
+  text-align: center;
+}
+
+.simulation-stats .row-header {
+  text-align: left;
+  background-color: lightgray;
+}
+
+.simulation-stats .data-row td {
+  min-width: 30px;
+  text-align: right;
+}

@@ -1,0 +1,15 @@
+.planting-controls .corn-percent-select {
+  /* TODO: deal with keyboard accessibility */
+  outline: none;
+}
+
+.planting-controls .pt-control input:focus ~ .pt-control-indicator {
+  /* TODO: deal with keyboard accessibility */
+  outline: none;
+}
+
+.planting-controls .toolbar {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+}

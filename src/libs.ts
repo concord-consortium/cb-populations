@@ -1,0 +1,1 @@
+export { default as PopulationsModelPanel } from './components/PopulationsModelPanel/populations-model-panel';

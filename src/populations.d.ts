@@ -157,7 +157,7 @@ declare namespace Populations {
 
   export class EnvironmentView {
     addMouseHandlers(): void;
-  },
+  }
 
   export class Environment {
     cells: any[];

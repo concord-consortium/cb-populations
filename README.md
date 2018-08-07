@@ -8,35 +8,9 @@ The farm model is an agent-based model that uses the [Populations.js](https://gi
 
 The model is available at [https://dat-cross.concord.org](https://dat-cross.concord.org).
 
-## Back Story for the Model
-
-Farmer Jonah’s primary cash crop is corn, and he has been able to maximize his corn crop for several years planting his field down to corn. 
-
-One year, Jonah’s field is invaded by an infestation of corn rootworm. Adult corn rootworm insects fly into the field and eat the silk of the growing corn preventing them from developing properly. Then they lay eggs in the soil that remain there through the winter. In the spring, the eggs hatch and the larval insects feast on the tender roots of the sprouting corn. As the corn grows, they burrow into the corn roots, depriving it of water and nutrients. This weakens the corn, and the stalks tend to bend over and the ears of corn develop poorly. Later in the summer, the adult insects emerge and start the cycle again. Corn rootworm has the potential to take a devastating toll on Jonah’s corn crop.
-
-Jonah needs an ecologically sound approach for protecting his corn. Two approaches are available to him:
-- He can plant a “trap crop” among his corn. A trap crop is a plant that is more attractive to the rootworm than corn, but has less nutritional value. If rootworms find the trap crop they prefer to eat it, but because of its lower nutritional value, it doesn't provide as much sustenance as eating corn.
-- After an infestation he can apply a rootworm predator to his field. One predator of the rootworm is the harvestman spider.
-
-Can you help Jonah maximize his corn crop?
-
-## Running the Model
-
-#### Default/student mode: [https://dat-cross.concord.org](https://dat-cross.concord.org)
-
-#### Configuration mode: [https://dat-cross.concord.org/?config](https://dat-cross.concord.org/?config)
-
-Configuration mode exposes the underlying model parameters. This makes it possible to run the model with different parameters for the corn, alfalfa, rootworms, or harvestmen. The UI for configuring the parameters replaces the bar charts of the results. There is currently no way to run the model with alternative parameter settings outside of configuration mode, but that could certainly be added at some point.
-
-#### Quiet mode: [https://dat-cross.concord.org/?quiet](https://dat-cross.concord.org/?quiet)
-
-In quiet mode, the introductory and end-of-season dialogs are not presented.
-
-#### Configuration mode and quiet mode: [https://dat-cross.concord.org/?config&quiet](https://dat-cross.concord.org/?config&quiet)
-
 # Development
 
-This project was developed using [CreateReactApp-TypeScript](https://github.com/wmonk/create-react-app-typescript), which is a fork of [CreateReactApp](https://github.com/facebookincubator/create-react-app) modified to support TypeScript. As of this writing the project has not ejected so it can still be updated to newer versions of [CreateReactApp-TypeScript](https://github.com/wmonk/create-react-app-typescript). The standard README for CreateReactApp, which provides tremendous detail on the infrastructure provided and the configuration options available, is provided below.
+This project was developed using [CreateReactApp-TypeScript](https://github.com/wmonk/create-react-app-typescript), which is a fork of [CreateReactApp](https://github.com/facebookincubator/create-react-app) modified to support TypeScript. As of this writing the project has been ejected so it cannot be updated to newer versions of [CreateReactApp-TypeScript](https://github.com/wmonk/create-react-app-typescript). The standard README for CreateReactApp, which provides tremendous detail on the infrastructure provided and the configuration options available, is provided below.
 
 ## Available Scripts
 
@@ -76,6 +50,14 @@ Runs lint on the project sources.
 ### `npm run lint:fix`
 
 Runs lint on the project sources with the `--fix` option, which automatically corrects problems (like missing semicolons) that can be fixed programmatically. Any modified source files will need to be committed manually.
+
+### `npm run lib`
+
+Bundles the application together as a library for distribution on `npm`. This is a two-step process which includes transpiling the Typescript to Javascript, and then copying over any assets.
+
+## `npm publish`
+
+As long as the version is updated in `package.json`, a new version will be uploaded on `npm`. You will then be able to import anything exported by `libs.ts`.
 
 ## `Populations.js` Wrapper
 

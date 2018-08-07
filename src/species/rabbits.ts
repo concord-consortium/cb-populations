@@ -1,9 +1,9 @@
-import { BasicAnimal, Species, Trait, Agent } from '../populations';
+import { BasicAnimal, Species, Trait } from '../populations';
 import { RabbitSpecies } from './biologica/rabbits-species';
 
-class Rabbit extends BasicAnimal {
+class Rabbit extends (BasicAnimal as { new(args): any; }) {
   moving: boolean;
-  _closestAgents: Agent[];
+  _closestAgents: any[];
 
   constructor(args) {
     super(args);

@@ -1,11 +1,6 @@
-import { corn } from './species/corn';
-import { spider } from './species/spider';
-import { worm, wormLifestage, getWormLifestage } from './species/rootworm';
-import { wormEgg } from './species/worm-egg';
 import { Rabbits } from './species/rabbits';
 import { Hawks } from './species/hawks';
 import { Agent, Environment, EnvironmentView, Rule, Interactive, Trait, ToolButton, Events } from './populations';
-import { variedPlants } from './species/varied-plants';
 import env_single from './environments/snow';
 import env_double from './environments/combo';
 

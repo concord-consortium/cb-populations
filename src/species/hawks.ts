@@ -1,6 +1,6 @@
 import { BasicAnimal, Species, Trait } from '../populations';
 
-class Hawk extends BasicAnimal {
+class Hawk extends (BasicAnimal as { new(args): any; }) {
   constructor(args) {
     super(args);
     this._viewLayer = 3;

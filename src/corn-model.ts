@@ -75,16 +75,16 @@ EnvironmentView.prototype.addMouseHandlers = function() {
 
 (<any>window).model = {
   brownness: 0,
-  checkParams: function() {
+  checkParams: function(config: IModelConfig) {
     var controlTypeParam, envParam;
-    envParam = this.getURLParam('envs', true);
+    envParam = this.getParameter('envs', config, true);
     this.envColors = envParam ? envParam : ['white'];
-    this["switch"] = this.getURLParam('switch') === 'true';
+    this["switch"] = this.getParameter('switch', config) === 'true';
     if (this["switch"]) {
       (<HTMLElement>document.querySelector("#switch-controls")).hidden = false;
     }
-    this.popControl = this.getURLParam('popControl');
-    controlTypeParam = this.getURLParam('controlType');
+    this.popControl = this.getParameter('popControl', config);
+    controlTypeParam = this.getParameter('controlType', config);
     this.controlType = controlTypeParam ? controlTypeParam : 'color';
     if (this.popControl === "user") {
       if (this.controlType === "color") {
@@ -94,7 +94,7 @@ EnvironmentView.prototype.addMouseHandlers = function() {
       }
     }
   },
-  run: function() {
+  run: function(config: IModelConfig) {
     var env, fieldHeight, fieldY, fields, i, k, labHeight, labY, labs, numEnvs, ref, width, x;
     env = this.envColors.length === 1 ? env_single : env_double;
     this.interactive = new Interactive({
@@ -161,7 +161,7 @@ EnvironmentView.prototype.addMouseHandlers = function() {
       labs: labs,
       fields: fields
     };
-    this.setupEnvironment();
+    this.setupEnvironment(config);
     env.addRule(new Rule({
       action: (function(_this) {
         return function(agent) {
@@ -209,14 +209,14 @@ EnvironmentView.prototype.addMouseHandlers = function() {
   getAgentEnvironmentIndex: function(agent) {
     return Math.min(Math.floor((agent._x / this.env.width) * this.envColors.length), this.envColors.length - 1);
   },
-  setupEnvironment: function() {
+  setupEnvironment: function(config: IModelConfig) {
     var buttons, numMice, that;
     buttons = [].slice.call($('.button img'));
     numMice = 30;
     that = this;
     buttons[0].parentNode.onclick = function() {
       var colors, i, j, k, l, ref, ref1;
-      colors = that.getStartingColors(numMice);
+      colors = that.getStartingColors(numMice, config);
       for (i = k = 0, ref = that.envColors.length; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
         for (j = l = 0, ref1 = numMice; 0 <= ref1 ? l < ref1 : l > ref1; j = 0 <= ref1 ? ++l : --l) {
           that.addAgent(that.rabbitSpecies, [], [
@@ -246,13 +246,13 @@ EnvironmentView.prototype.addMouseHandlers = function() {
     };
     return Events.addEventListener(Environment.EVENTS.RESET, (function(_this) {
       return function() {
-        model.setupEnvironment();
+        model.setupEnvironment(config);
         _this.addedHawks = false;
         return _this.addedRabbits = false;
       };
     })(this));
   },
-  getStartingColors: function(num) {
+  getStartingColors: function(num, config) {
     var BBParam, BbParam, brownInput, brownParam, colors, givenBB, givenBb, givenBrown, givenWhite, givenbb, i, inputBB, inputBb, inputbb, k, l, percentBB, percentBb, percentBrown, ref, ref1, whiteInput;
     colors = [];
     if (this.controlType === "color") {
@@ -266,7 +266,7 @@ EnvironmentView.prototype.addMouseHandlers = function() {
         brownInput.value = Math.round(percentBrown * 100);
         whiteInput.value = Math.round((1 - percentBrown) * 100);
       } else {
-        brownParam = this.getURLParam("percentBrown");
+        brownParam = this.getParameter("percentBrown", config);
         percentBrown = brownParam ? parseInt(brownParam) / 100 : .75;
       }
       for (i = k = 0, ref = num; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
@@ -288,9 +288,9 @@ EnvironmentView.prototype.addMouseHandlers = function() {
         inputBb.value = Math.round(percentBb * 100);
         inputbb.value = Math.round((1 - (percentBB + percentBb)) * 100);
       } else {
-        BBParam = this.getURLParam("percentBB");
+        BBParam = this.getParameter("percentBB", config);
         percentBB = BBParam ? parseInt(BBParam) / 100 : .38;
-        BbParam = this.getURLParam("percentBB");
+        BbParam = this.getParameter("percentBB", config);
         percentBb = BbParam ? parseInt(BbParam) / 100 : .38;
       }
       for (i = l = 0, ref1 = num; 0 <= ref1 ? l < ref1 : l > ref1; i = 0 <= ref1 ? ++l : --l) {
@@ -299,7 +299,10 @@ EnvironmentView.prototype.addMouseHandlers = function() {
     }
     return colors;
   },
-  getURLParam: function(key, forceArray) {
+  getParameter: function(key: string, config?: IModelConfig, forceArray: boolean = false) {
+    return config ? this.getConfigParameter(key, config) : this.getURLParameter(key, forceArray);
+  },
+  getURLParameter: function(key: string, forceArray: boolean = false) {
     var k, len, paramKey, paramVal, query, raw_vars, ref, v, value;
     query = window.location.search.substring(1);
     raw_vars = query.split("&");
@@ -316,6 +319,10 @@ EnvironmentView.prototype.addMouseHandlers = function() {
       }
     }
     return null;
+  },
+  getConfigParameter: function(key: string, config: IModelConfig) {
+    const fullConfig = Object.assign(DEFAULT_CONFIG, config);
+    return fullConfig[key];
   },
   setupGraphs: function() {
     this.graphData = {};
@@ -713,11 +720,29 @@ EnvironmentView.prototype.addMouseHandlers = function() {
   preload: ["images/agents/rabbits/sandrat-dark.png", "images/agents/rabbits/sandrat-light.png", "images/agents/hawks/hawk.png", "images/environments/white.png", "images/environments/brown.png", "images/environments/brown_brown.png", "images/environments/brown_white.png", "images/environments/white_brown.png", "images/environments/white_white.png"]
 };
 
-export function init() {
+export interface IModelConfig {
+  envs?: string[];
+  percentBB?: number;
+  percentBb?: number;
+  showSwitch?: boolean;
+  popControl?: string;
+  controlType?: string;
+}
+
+const DEFAULT_CONFIG: IModelConfig = {
+  envs: ['white'],
+  percentBB: 25,
+  percentBb: 50,
+  showSwitch: false,
+  popControl: 'author',
+  controlType: 'genotype'
+};
+
+export function init(config?: IModelConfig) {
   const model = (<any>window).model;
 
-  model.checkParams()
-  model.run()
+  model.checkParams(config)
+  model.run(config)
   model.setupGraphs()
   model.setupControls()
   model.setupPopulationControls()

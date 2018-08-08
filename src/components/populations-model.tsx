@@ -2,13 +2,16 @@ import '../style/App.css';
 import * as React from 'react';
 import { init } from '../corn-model';
 import { Interactive } from '../populations';
+import { IModelConfig } from '../corn-model';
 
-interface IProps {}
+interface IProps {
+  modelConfig?: IModelConfig;
+}
 interface IState {}
 
 class PopulationsModel extends React.Component<IProps, IState> {
   public componentDidMount() {
-    init();
+    init(this.props.modelConfig);
   }
 
   public render() {

@@ -1,13 +1,16 @@
 import * as React from 'react';
 import PopulationsModel from '../populations-model';
+import { IModelConfig } from '../../corn-model';
 
-interface IProps {}
+interface IProps {
+  modelConfig?: IModelConfig;
+}
 
 interface IState {}
 
 export default class PopulationsModelPanel extends React.Component<IProps, IState> {
   public render() {
-    const populationsModel = <PopulationsModel />;
+    const populationsModel = <PopulationsModel modelConfig={this.props.modelConfig} />;
     return (
       <div id="model-panel">
         <div id="color-controls" hidden={true}>

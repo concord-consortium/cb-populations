@@ -1,3 +1,4 @@
+import '../style/App.css';
 import * as React from 'react';
 import { init } from '../corn-model';
 import { Interactive } from '../populations';

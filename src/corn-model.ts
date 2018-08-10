@@ -1,80 +1,15 @@
 import { Rabbits } from './species/rabbits';
 import { Hawks } from './species/hawks';
-import { Agent, Environment, EnvironmentView, Rule, Interactive, Trait, ToolButton, Events } from './populations';
-import env_single from './environments/snow';
-import env_double from './environments/combo';
+import { Agent, Environment, EnvironmentView, Rule, Interactive, Trait, ToolButton, Events, InfoView } from './populations';
+import getSingleEnv from './environments/snow';
+import getDoubleEnv from './environments/combo';
 
 const ExtMath = (<any>window).ExtMath;
 const LabGrapher = (<any>window).LabGrapher;
-const model = (<any>window).model;
 
-Agent.prototype.canBeCarried = function() {
-  return true;
-};
-
-ToolButton.prototype._states['carry-tool'].mousedown = function(evt) {
-  var agent;
-  agent = this.getAgentAt(evt.envX, evt.envY);
-  if (agent == null) {
-    return;
-  }
-  if (!agent.canBeCarried()) {
-    return;
-  }
-  this.pickUpAgent(agent);
-  this._agent = agent;
-  this._origin = {
-    x: evt.envX,
-    y: evt.envY
-  };
-  return this._agentOrigin = agent.getLocation();
-};
-
-Environment.prototype.randomLocationWithin = function(left, top, width, height, avoidBarriers) {
-  var point;
-  if (avoidBarriers == null) {
-    avoidBarriers = false;
-  }
-  point = {
-    x: ExtMath.randomInt(width) + left,
-    y: ExtMath.randomInt(height) + top
-  };
-  while (avoidBarriers && this.isInBarrier(point.x, point.y)) {
-    point = {
-      x: ExtMath.randomInt(width) + left,
-      y: ExtMath.randomInt(height) + top
-    };
-  }
-  return point;
-};
-
-EnvironmentView.prototype.addMouseHandlers = function() {
-  var eventName, k, len, ref, results;
-  ref = ["click", "mousedown", "mouseup", "mousemove", "touchstart", "touchmove", "touchend"];
-  results = [];
-  for (k = 0, len = ref.length; k < len; k++) {
-    eventName = ref[k];
-    results.push(this.view.addEventListener(eventName, (function(_this) {
-      return function(evt) {
-        var scale;
-        if (evt instanceof TouchEvent) {
-          (<any>evt).envX = evt.changedTouches[0].pageX - _this.view.offsetLeft;
-          (<any>evt).envY = evt.changedTouches[0].pageY - _this.view.offsetTop;
-        } else {
-          scale = document.querySelector("body").style.transform;
-          scale = parseFloat(scale.slice(scale.indexOf(",") + 1));
-          evt.envX = (1 / scale) * (evt.pageX - _this.view.offsetLeft);
-          evt.envY = (1 / scale) * (evt.pageY - _this.view.offsetTop);
-        }
-        return _this.environment.send(evt.type, evt);
-      };
-    })(this)));
-  }
-  return results;
-};
-
-(<any>window).model = {
+function createModel() { return ({
   brownness: 0,
+  eventListeners: [],
   checkParams: function(config: IModelConfig) {
     var controlTypeParam, envParam;
     envParam = this.getParameter('envs', config, true);
@@ -96,7 +31,7 @@ EnvironmentView.prototype.addMouseHandlers = function() {
   },
   run: function(config: IModelConfig) {
     var env, fieldHeight, fieldY, fields, i, k, labHeight, labY, labs, numEnvs, ref, width, x;
-    env = this.envColors.length === 1 ? env_single : env_double;
+    env = this.envColors.length === 1 ? getSingleEnv() : getDoubleEnv();
     this.interactive = new Interactive({
       environment: env,
       speedSlider: false,
@@ -244,9 +179,9 @@ EnvironmentView.prototype.addMouseHandlers = function() {
       }
       return buttons[1].parentNode.onclick = null;
     };
-    return Events.addEventListener(Environment.EVENTS.RESET, (function(_this) {
+    this.addEventListener(document, Environment.EVENTS.RESET, (function(_this) {
       return function() {
-        model.setupEnvironment(config);
+        (<any>window).model.setupEnvironment(config);
         _this.addedHawks = false;
         return _this.addedRabbits = false;
       };
@@ -289,9 +224,9 @@ EnvironmentView.prototype.addMouseHandlers = function() {
         inputbb.value = Math.round((1 - (percentBB + percentBb)) * 100);
       } else {
         BBParam = this.getParameter("percentBB", config);
-        percentBB = BBParam ? parseInt(BBParam) / 100 : .38;
-        BbParam = this.getParameter("percentBB", config);
-        percentBb = BbParam ? parseInt(BbParam) / 100 : .38;
+        percentBB = !(isNaN(BBParam)) ? parseInt(BBParam) / 100 : .38;
+        BbParam = this.getParameter("percentBb", config);
+        percentBb = !(isNaN(BbParam)) ? parseInt(BbParam) / 100 : .38;
       }
       for (i = l = 0, ref1 = num; 0 <= ref1 ? l < ref1 : l > ref1; i = 0 <= ref1 ? ++l : --l) {
         colors.push(this.createRandomColorTraitByGenotype(percentBB, percentBb));
@@ -326,6 +261,7 @@ EnvironmentView.prototype.addMouseHandlers = function() {
   },
   setupGraphs: function() {
     this.graphData = {};
+    this.graphs = {};
     this.createGraphForEnvs("Mouse Colors", "Time (s)", "Number of Mice", ["#999999", "#995500"], ["Light mice", "Dark mice"], "color-graph", this.graphRabbitColors, "graph-colors", ["graph-alleles", "graph-genotypes"]);
     this.createGraphForEnvs("Mouse Genotypes", "Time (s)", "Number of Mice", ["#F2CB7C","#AAAAAA", "#555555"], ["bb mice", "bB mice", "BB mice"], "genotype-graph", this.graphRabbitGenotypes, "graph-genotypes", ["graph-alleles", "graph-colors"]);
     this.createGraphForEnvs("Mouse Alleles", "Time (s)", "Number of Alleles", ["#999999", "#995500"], ["b alleles", "B alleles"], "allele-graph", this.graphRabbitAlleles, "graph-alleles", ["graph-colors", "graph-genotypes"]);
@@ -363,14 +299,13 @@ EnvironmentView.prototype.addMouseHandlers = function() {
       };
     })(this);
     this.graphData[showButton] = {};
+    this.graphs[showButton] = {};
     results = [];
     for (i = k = 0, ref = this.envColors.length; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
       that = this;
       results.push((function(i) {
-        var graph;
-        graph = null;
         that.graphData[showButton][i] = [];
-        document.getElementById(showButton).addEventListener("click", (function(_this) {
+        that.addEventListener(document.getElementById(showButton), "click", (function(_this) {
           return function() {
             var containerDiv, currGraph, fullId, graphDiv;
             currGraph = document.getElementById("graph-container-" + i);
@@ -385,9 +320,9 @@ EnvironmentView.prototype.addMouseHandlers = function() {
             fullId = graphId + "-" + i;
             graphDiv.id = fullId;
             containerDiv.appendChild(graphDiv);
-            graph = LabGrapher("#" + fullId, outputOptions);
-            that.graphData[showButton][i].forEach(function(sample) {
-              return graph.addSamples(sample);
+            _this.graphs[showButton][i] = LabGrapher("#" + fullId, outputOptions);
+            _this.graphData[showButton][i].forEach(function(sample) {
+              return _this.graphs[showButton][i].addSamples(sample);
             });
             seriesNames.forEach(function(series, i) {
               var seriesDiv, seriesText;
@@ -398,37 +333,42 @@ EnvironmentView.prototype.addMouseHandlers = function() {
               seriesDiv.appendChild(seriesText);
               return containerDiv.appendChild(seriesDiv);
             });
-            return updateWindow(graph);
+            return updateWindow(_this.graphs[showButton][i]);
           };
-        })(this));
+        })(that));
         hideButtons.forEach((function(_this) {
           return function(buttonId) {
-            return document.getElementById(buttonId).addEventListener("click", function() {
-              return graph = null;
+            return _this.addEventListener(document.getElementById(buttonId), "click", function() {
+              return _this.graphs[showButton][i] = null;
             });
           };
-        })(this));
-        Events.addEventListener(Environment.EVENTS.RESET, (function(_this) {
+        })(that));
+        that.addEventListener(document, Environment.EVENTS.RESET, (function(_this) {
           return function() {
-            that.graphData[showButton][i] = [];
+            _this.graphData[showButton][i] = [];
+            const graph = _this.graphs[showButton][i];
             if (graph) {
               graph.reset();
               return updateWindow(graph);
             }
-          };
-        })(this));
-        return Events.addEventListener(Environment.EVENTS.STEP, (function(_this) {
+          }
+        })(that));
+        return that.addEventListener(document, Environment.EVENTS.STEP, (function(_this) {
           return function() {
             that.graphData[showButton][i].push(counter.call(that, that.locations.fields[i]));
-            if (graph) {
-              graph.addSamples(counter.call(that, that.locations.fields[i]));
-              return updateWindow(graph);
+            if (_this.graphs[showButton][i]) {
+              _this.graphs[showButton][i].addSamples(counter.call(that, that.locations.fields[i]));
+              return updateWindow(_this.graphs[showButton][i]);
             }
           };
-        })(this));
+        })(that));
       })(i));
     }
     return results;
+  },
+  addEventListener: function(target, type, callback) {
+    this.eventListeners.push({target, type, callback});
+    return target.addEventListener(type, callback);
   },
   agentsOfSpecies: function(species) {
     var a, k, len, ref, set;
@@ -529,22 +469,21 @@ EnvironmentView.prototype.addMouseHandlers = function() {
     }
     return [count_b, count_B];
   },
+  switchColors: function() {
+    if (this.envColors.length === 1) {
+      if (this.envColors[0] === "white") {
+        this.envColors[0] = "brown";
+        return this.env.setBackground(require("./images/environments/brown.png"));
+      } else {
+        this.envColors[0] = "white";
+        return this.env.setBackground(require("./images/environments/white.png"));
+      }
+    }
+  },
   setupControls: function() {
     var switchButton;
     switchButton = document.getElementById('switch-env');
-    switchButton.onclick = (function(_this) {
-      return function() {
-        if (_this.envColors.length === 1) {
-          if (_this.envColors[0] === "white") {
-            _this.envColors[0] = "brown";
-            return _this.env.setBackground(require("./images/environments/brown.png"));
-          } else {
-            _this.envColors[0] = "white";
-            return _this.env.setBackground(require("./images/environments/white.png"));
-          }
-        }
-      };
-    })(this);
+    switchButton.onclick = this.switchColors.bind(this);
     document.getElementById('view-sex-check').onclick = (function(_this) {
       return function() {
         return (<any>window).model.showSex = document.querySelector('#view-sex-check:checked');
@@ -559,7 +498,7 @@ EnvironmentView.prototype.addMouseHandlers = function() {
     return (<HTMLElement>document.querySelector(".toolbar")).style.left = this.envColors.length * 450 + 10 + "px";
   },
   setupPopulationControls: function() {
-    return Events.addEventListener(Environment.EVENTS.STEP, (function(_this) {
+    return this.addEventListener(document, Environment.EVENTS.STEP, (function(_this) {
       return function() {
         var i, k, ref, results;
         results = [];
@@ -592,7 +531,7 @@ EnvironmentView.prototype.addMouseHandlers = function() {
       return body.style.transform = 'scale(' + newScale + ',' + newScale + ')';
     };
     updateScale();
-    return window.addEventListener("resize", updateScale);
+    return this.addEventListener(window, "resize", updateScale);
   },
   setProperty: function(agents, prop, val) {
     var a, k, len, results;
@@ -718,7 +657,7 @@ EnvironmentView.prototype.addMouseHandlers = function() {
     return this.setProperty(allHawks, "hunger bonus", 5);
   },
   preload: ["images/agents/rabbits/sandrat-dark.png", "images/agents/rabbits/sandrat-light.png", "images/agents/hawks/hawk.png", "images/environments/white.png", "images/environments/brown.png", "images/environments/brown_brown.png", "images/environments/brown_white.png", "images/environments/white_brown.png", "images/environments/white_white.png"]
-};
+})};
 
 export interface IModelConfig {
   envs?: string[];
@@ -727,6 +666,8 @@ export interface IModelConfig {
   showSwitch?: boolean;
   popControl?: string;
   controlType?: string;
+
+  addToBackpack?: (mouse) => void;
 }
 
 const DEFAULT_CONFIG: IModelConfig = {
@@ -735,11 +676,104 @@ const DEFAULT_CONFIG: IModelConfig = {
   percentBb: 50,
   showSwitch: false,
   popControl: 'author',
-  controlType: 'genotype'
+  controlType: 'genotype',
 };
 
+export function patchPrototypes(config: IModelConfig) {
+  Agent.prototype.canBeCarried = function() {
+    return true;
+  };
+
+  Events.removeEventListener = function(type, callback) {
+    if (document.removeEventListener != null) {
+      return document.removeEventListener(type, callback);
+    } else {
+      return console.warn("document doesn't support removeEventListener!");
+    }
+  }
+  
+  ToolButton.prototype._states['carry-tool'].mousedown = function(evt) {
+    var agent;
+    agent = this.getAgentAt(evt.envX, evt.envY);
+    if (agent == null) {
+      return;
+    }
+    if (!agent.canBeCarried()) {
+      return;
+    }
+    this.pickUpAgent(agent);
+    this._agent = agent;
+    this._origin = {
+      x: evt.envX,
+      y: evt.envY
+    };
+    return this._agentOrigin = agent.getLocation();
+  };
+  
+  Environment.prototype.randomLocationWithin = function(left, top, width, height, avoidBarriers) {
+    var point;
+    if (avoidBarriers == null) {
+      avoidBarriers = false;
+    }
+    point = {
+      x: ExtMath.randomInt(width) + left,
+      y: ExtMath.randomInt(height) + top
+    };
+    while (avoidBarriers && this.isInBarrier(point.x, point.y)) {
+      point = {
+        x: ExtMath.randomInt(width) + left,
+        y: ExtMath.randomInt(height) + top
+      };
+    }
+    return point;
+  };
+  
+  EnvironmentView.prototype.addMouseHandlers = function() {
+    var eventName, k, len, ref, results;
+    ref = ["click", "mousedown", "mouseup", "mousemove", "touchstart", "touchmove", "touchend"];
+    results = [];
+    for (k = 0, len = ref.length; k < len; k++) {
+      eventName = ref[k];
+      results.push(this.view.addEventListener(eventName, (function(_this) {
+        return function(evt) {
+          var scale;
+          if (evt instanceof TouchEvent) {
+            (<any>evt).envX = evt.changedTouches[0].pageX - _this.view.offsetLeft;
+            (<any>evt).envY = evt.changedTouches[0].pageY - _this.view.offsetTop;
+          } else {
+            scale = document.querySelector("body").style.transform;
+            scale = parseFloat(scale.slice(scale.indexOf(",") + 1));
+            evt.envX = (1 / scale) * (evt.pageX - _this.view.offsetLeft);
+            evt.envY = (1 / scale) * (evt.pageY - _this.view.offsetTop);
+          }
+          return _this.environment.send(evt.type, evt);
+        };
+      })(this)));
+    }
+    return results;
+  };
+  
+  if (config && config.addToBackpack) {
+    InfoView.prototype.render = function(render) {
+      return function() {
+        const view = render.apply(this);
+        const buttonHolder = document.createElement('div');
+        buttonHolder.className = 'backpack-button';
+        const select = document.createElement('button');
+        select.onclick = () => config.addToBackpack(this.agent);
+        const label = document.createTextNode('Add to Backpack');
+        select.appendChild(label);
+        buttonHolder.appendChild(select);
+        view.appendChild(buttonHolder);
+        return view;
+      }
+    }(InfoView.prototype.render);
+  }
+}
+
 export function init(config?: IModelConfig) {
-  const model = (<any>window).model;
+  const model = createModel();
+  (window as any).model = model;
 
   model.checkParams(config)
   model.run(config)
@@ -747,4 +781,15 @@ export function init(config?: IModelConfig) {
   model.setupControls()
   model.setupPopulationControls()
   model.setupScaling()
+
+  return model;
+}
+
+export function reset(config?: IModelConfig) {
+  const model = (window as any).model;
+  model.eventListeners.forEach((listener) => (listener.target).removeEventListener(listener.type, listener.callback));
+  model.interactive.reset();
+  
+  document.getElementById('environment').innerHTML = '';
+  document.getElementById('graphs').innerHTML = '';
 }

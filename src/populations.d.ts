@@ -14,6 +14,7 @@ declare namespace Populations {
   export class Events {
     static dispatchEvent(type: string, data: any): void;
     static addEventListener(type: string, listener: (evt: any) => void): void;
+    static removeEventListener(type: string, listener: (evt: any) => void): void;
   }
   
   export class Agent {
@@ -354,6 +355,10 @@ declare namespace Populations {
     play(): void;
     stop(): void;
     reset(): void;
+  }
+
+  export class InfoView {
+    render(): void;
   }
 
   export class Toolbar {

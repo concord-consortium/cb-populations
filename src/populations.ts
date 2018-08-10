@@ -15,6 +15,7 @@ export const Trait = (window as any).require_brunch('models/trait');
 export const Interactive = (window as any).require_brunch('ui/interactive');
 export const Toolbar = (window as any).require_brunch('ui/toolbar');
 export const ToolButton = (window as any).require_brunch('ui/tool-button');
+export const InfoView = (window as any).require_brunch('ui/info-view');
 
 export const EnvironmentView = (window as any).require_brunch('views/environment-view');
-export const Events = (window as any).require_brunch('events')
+export const Events = (window as any).require_brunch('events');

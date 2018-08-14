@@ -77,13 +77,15 @@ function createModel() { return ({
         x: x,
         y: labY,
         width: width,
-        height: labHeight
+        height: labHeight,
+        index: i
       });
       fields.push({
         x: x,
         y: fieldY,
         width: width,
-        height: fieldHeight
+        height: fieldHeight,
+        index: i
       });
     }
     this.locations = {
@@ -587,8 +589,34 @@ function createModel() { return ({
       this.addedRabbits = true;
     }
     if (this.addedRabbits && this.numRabbits < 5) {
-      for (i = k = 0; k < 4; i = ++k) {
+      for (let i = 0; i < 4; i++) {
         this.addAgent(this.rabbitSpecies, [], [this.copyRandomColorTrait(allRabbits)]);
+      }
+    }
+
+    // If there are no specific selective pressures (ie there are no hawks, or the hawks eat 
+    // everything with equal probability), the population should be 'stabilized', so that no
+    // color of rabbit dies out completely
+    if (this.addedRabbits && (!this.addedHawks || this.envColors[location.index] === 'neutral')) {
+      let numWhite = 0;
+      allRabbits.forEach((rabbit) => {
+        if (rabbit.get('color') === 'white') {
+          numWhite++;
+        }
+      });
+
+      // Make sure there are *some* white rabbits to ensure white rabbits are possible
+      if (numWhite > 0 && numWhite < 10) {
+        for (let i = 0; i < 3; i++) {
+          this.addAgent(this.rabbitSpecies, [], this.createRandomColorTraitByPhenotype(0), location);
+        }
+      }
+
+      const numBrown = allRabbits - numWhite;
+      if (numBrown > 0 && numBrown < 10) {
+        for (let i = 0; i < 3; i++) {
+          this.addAgent(this.rabbitSpecies, [], this.createRandomColorTraitByPhenotype(1), location);
+        }
       }
     }
     return this.setProperty(allRabbits, "mating chance", -.005 * this.numRabbits + .25);

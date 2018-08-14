@@ -104,8 +104,12 @@ function createModel() { return ({
         return function(agent) {
           var brownness, envIndex;
           if (agent.species === _this.rabbitSpecies) {
-            envIndex = _this.getAgentEnvironmentIndex(agent);
-            brownness = _this.envColors[envIndex] === 'brown';
+            const envColor = _this.envColors[_this.getAgentEnvironmentIndex(agent)];
+            brownness = envColor === 'white'
+              ? brownness = 0
+              : envColor === 'neutral' 
+                ? brownness = .5
+                : brownness = 1
             if (agent.get('color') === 'brown') {
               return agent.set('chance of being seen', 0.6 - (brownness * 0.6));
             } else {
@@ -474,6 +478,9 @@ function createModel() { return ({
   switchColors: function() {
     if (this.envColors.length === 1) {
       if (this.envColors[0] === "white") {
+        this.envColors[0] = "neutral";
+        return this.env.setBackground(require("./images/environments/neutral.png"));
+      } else if (this.envColors[0] === "neutral") {
         this.envColors[0] = "brown";
         return this.env.setBackground(require("./images/environments/brown.png"));
       } else {

@@ -268,13 +268,14 @@ function createModel() { return ({
   setupGraphs: function() {
     this.graphData = {};
     this.graphs = {};
-    this.createGraphForEnvs("Mouse Colors", "Time (s)", "Number of Mice", ["#999999", "#995500"], ["Light mice", "Dark mice"], "color-graph", this.graphRabbitColors, "graph-colors", ["graph-alleles", "graph-genotypes"]);
-    this.createGraphForEnvs("Mouse Genotypes", "Time (s)", "Number of Mice", ["#F2CB7C","#AAAAAA", "#555555"], ["bb mice", "bB mice", "BB mice"], "genotype-graph", this.graphRabbitGenotypes, "graph-genotypes", ["graph-alleles", "graph-colors"]);
-    this.createGraphForEnvs("Mouse Alleles", "Time (s)", "Number of Alleles", ["#999999", "#995500"], ["b alleles", "B alleles"], "allele-graph", this.graphRabbitAlleles, "graph-alleles", ["graph-colors", "graph-genotypes"]);
+    this.graphZooms = this.envColors.map(() => 'recent');
+    this.createGraphForEnvs("Mouse Colors", "Time (days)", "Number of Mice", ["#999999", "#995500"], ["Light mice", "Dark mice"], "color-graph", this.graphRabbitColors, "graph-colors", ["graph-alleles", "graph-genotypes"]);
+    this.createGraphForEnvs("Mouse Genotypes", "Time (days)", "Number of Mice", ["#F2CB7C","#AAAAAA", "#555555"], ["bb mice", "bB mice", "BB mice"], "genotype-graph", this.graphRabbitGenotypes, "graph-genotypes", ["graph-alleles", "graph-colors"]);
+    this.createGraphForEnvs("Mouse Alleles", "Time (days)", "Number of Alleles", ["#999999", "#995500"], ["b alleles", "B alleles"], "allele-graph", this.graphRabbitAlleles, "graph-alleles", ["graph-colors", "graph-genotypes"]);
     return document.getElementById("graph-colors").click();
   },
   createGraphForEnvs: function(title, xLabel, yLabel, colors, seriesNames, graphId, counter, showButton, hideButtons) {
-    var i, k, outputOptions, ref, results, that, updateWindow;
+    var i, k, outputOptions, ref, results, that, updateWindow, updateButtonText;
     outputOptions = {
       title: title,
       xlabel: xLabel,
@@ -291,19 +292,34 @@ function createModel() { return ({
       fontScaleRelativeToParent: true,
       sampleInterval: Environment.DEFAULT_RUN_LOOP_DELAY / 1000,
       dataType: 'samples',
-      dataColors: colors
+      dataColors: colors,
+      enableAutoScaleButton: false
     };
     updateWindow = (function(_this) {
-      return function(graph) {
-        var pointsPerWindow, windowNum;
-        pointsPerWindow = (5 * 1000) / Environment.DEFAULT_RUN_LOOP_DELAY;
-        windowNum = Math.max(0, Math.floor(graph.numberOfPoints() / pointsPerWindow) - 1);
-        graph.xmin(windowNum * 5);
-        graph.xmax(graph.xmin() + 10);
-        graph.ymin(0);
-        return graph.ymax(100);
+      return function(graph, zoomType) {
+        if (zoomType === 'recent') {
+          var pointsPerWindow, windowNum;
+          // Pan the graph window every 5 seconds
+          pointsPerWindow = (5 * 1000) / Environment.DEFAULT_RUN_LOOP_DELAY;
+          // Subtract 1 from the window since the first scroll isn't actually till 10 seconds
+          windowNum = Math.max(0, Math.floor(graph.numberOfPoints() / pointsPerWindow) - 1);
+          graph.xmin(windowNum * 5);
+          graph.xmax(graph.xmin() + 10);
+          graph.ymin(0);
+          return graph.ymax(105);
+        } else {
+          const pointsPerSecond = 1000 / Environment.DEFAULT_RUN_LOOP_DELAY;
+          graph.xmin(0);
+          graph.xmax(Math.max(1, graph.numberOfPoints() / pointsPerSecond));
+          graph.ymin(0);
+          graph.ymax(105);
+        }
       };
     })(this);
+    updateButtonText = (button, zoomType) => {
+      // The button should show text for the zoom type it switches *to*
+      button.textContent = zoomType === 'recent' ? 'Show all data' : 'Show recent data';
+    };
     this.graphData[showButton] = {};
     this.graphs[showButton] = {};
     results = [];
@@ -311,21 +327,41 @@ function createModel() { return ({
       that = this;
       results.push((function(i) {
         that.graphData[showButton][i] = [];
+
+        const zoomButton = document.createElement("button");
+        zoomButton.className = 'autoscale-button';
+        zoomButton.textContent = 'Show all data';
+        zoomButton.addEventListener('click', () => {
+          if (that.graphZooms[i] == 'all') {
+            that.graphZooms[i] = 'recent';
+          } else {
+            that.graphZooms[i] = 'all';
+          }
+          updateWindow(that.graphs[showButton][i], that.graphZooms[i]);
+          updateButtonText(zoomButton, that.graphZooms[i])
+        });
+
+        // Destroy and re-create the graph on button clicks
         that.addEventListener(document.getElementById(showButton), "click", (function(_this) {
           return function() {
-            var containerDiv, currGraph, fullId, graphDiv;
-            currGraph = document.getElementById("graph-container-" + i);
-            if (currGraph) {
-              currGraph.remove();
+            var containerDiv, fullId, graphDiv;
+            const currentDiv = document.getElementById("graph-container-" + i);
+            if (currentDiv) {
+              currentDiv.remove();
             }
             containerDiv = document.createElement("div");
             containerDiv.id = "graph-container-" + i;
             document.getElementById("graphs").appendChild(containerDiv);
+
+            containerDiv.appendChild(zoomButton);
+            updateButtonText(zoomButton, _this.graphZooms[i]);
+
             graphDiv = document.createElement("div");
             graphDiv.className = "graph stat-graph";
             fullId = graphId + "-" + i;
             graphDiv.id = fullId;
             containerDiv.appendChild(graphDiv);
+
             _this.graphs[showButton][i] = LabGrapher("#" + fullId, outputOptions);
             _this.graphData[showButton][i].forEach(function(sample) {
               return _this.graphs[showButton][i].addSamples(sample);
@@ -339,7 +375,7 @@ function createModel() { return ({
               seriesDiv.appendChild(seriesText);
               return containerDiv.appendChild(seriesDiv);
             });
-            return updateWindow(_this.graphs[showButton][i]);
+            return updateWindow(_this.graphs[showButton][i], _this.graphZooms[i]);
           };
         })(that));
         hideButtons.forEach((function(_this) {
@@ -355,7 +391,7 @@ function createModel() { return ({
             const graph = _this.graphs[showButton][i];
             if (graph) {
               graph.reset();
-              return updateWindow(graph);
+              return updateWindow(graph, _this.graphZooms[i]);
             }
           }
         })(that));
@@ -364,7 +400,7 @@ function createModel() { return ({
             that.graphData[showButton][i].push(counter.call(that, that.locations.fields[i]));
             if (_this.graphs[showButton][i]) {
               _this.graphs[showButton][i].addSamples(counter.call(that, that.locations.fields[i]));
-              return updateWindow(_this.graphs[showButton][i]);
+              return updateWindow(_this.graphs[showButton][i], _this.graphZooms[i]);
             }
           };
         })(that));
@@ -597,7 +633,7 @@ function createModel() { return ({
     }
     if (this.addedRabbits && this.numRabbits < 5) {
       for (let i = 0; i < 4; i++) {
-        this.addAgent(this.rabbitSpecies, [], [this.copyRandomColorTrait(allRabbits)]);
+        this.addAgent(this.rabbitSpecies, [], [this.copyRandomColorTrait(allRabbits)], location);
       }
     }
 

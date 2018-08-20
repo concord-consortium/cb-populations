@@ -655,7 +655,7 @@ function createModel() { return ({
         }
       }
 
-      const numBrown = allRabbits - numWhite;
+      const numBrown = allRabbits.length - numWhite;
       if (numBrown > 0 && numBrown < 10) {
         for (let i = 0; i < 3; i++) {
           this.addAgent(this.rabbitSpecies, [], this.createRandomColorTraitByPhenotype(1), location);

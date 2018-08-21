@@ -1,7 +1,7 @@
 import { BasicAnimal, Species, Trait } from '../populations';
-import { RabbitSpecies } from './biologica/rabbits-species';
+import { MouseSpecies } from './biologica/mice-species';
 
-class Rabbit extends (BasicAnimal as { new(args): any; }) {
+class Mouse extends (BasicAnimal as { new(args): any; }) {
   moving: boolean;
   _closestAgents: any[];
 
@@ -27,7 +27,7 @@ class Rabbit extends (BasicAnimal as { new(args): any; }) {
   makeNewborn() {
     super.makeNewborn();
     const model = (<any>window).model;
-    var sex = model.env.agents.length && model.env.agents[model.env.agents.length - 1].species.speciesName === "rabbits" && model.env.agents[model.env.agents.length - 1].get("sex") === "female" ? "male" : "female";
+    var sex = model.env.agents.length && model.env.agents[model.env.agents.length - 1].species.speciesName === "mice" && model.env.agents[model.env.agents.length - 1].get("sex") === "female" ? "male" : "female";
     this.set('sex', sex);
     return this.set('age', Math.round(Math.random() * 5));
   };
@@ -57,10 +57,10 @@ class Rabbit extends (BasicAnimal as { new(args): any; }) {
   };
 }
 
-export const Rabbits = new Species({
-  speciesName: "rabbits",
-  agentClass: Rabbit,
-  geneticSpecies: RabbitSpecies,
+export const Mice = new Species({
+  speciesName: "mice",
+  agentClass: Mouse,
+  geneticSpecies: MouseSpecies,
   defs: {
     MAX_HEALTH: 1,
     MATURITY_AGE: 9,
@@ -89,7 +89,7 @@ export const Rabbits = new Species({
   ],
   imageRules: [
     {
-      name: 'rabbit',
+      name: 'mouse',
       contexts: ['environment', 'carry-tool'],
       rules: [
         {
@@ -167,7 +167,7 @@ export const Rabbits = new Species({
         }
       ]
     }, {
-      name: 'rabbit info tool',
+      name: 'mouse info tool',
       contexts: ['info-tool'],
       rules: [
         {

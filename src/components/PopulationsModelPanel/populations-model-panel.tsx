@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PopulationsModel from '../populations-model';
-import { IModelConfig } from '../../corn-model';
+import { IModelConfig } from '../../hawk-mice-model';
 
 interface IProps {
   modelConfig?: IModelConfig;

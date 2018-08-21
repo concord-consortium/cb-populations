@@ -651,18 +651,29 @@ function createModel() { return ({
       // Make sure there are *some* white rabbits to ensure white rabbits are possible
       if (numWhite > 0 && numWhite < 10) {
         for (let i = 0; i < 3; i++) {
-          this.addAgent(this.rabbitSpecies, [], this.createRandomColorTraitByPhenotype(0), location);
+          this.addAgent(this.rabbitSpecies, [], [this.createRandomColorTraitByPhenotype(0)], location);
         }
       }
 
       const numBrown = allRabbits.length - numWhite;
       if (numBrown > 0 && numBrown < 10) {
         for (let i = 0; i < 3; i++) {
-          this.addAgent(this.rabbitSpecies, [], this.createRandomColorTraitByPhenotype(1), location);
+          this.addAgent(this.rabbitSpecies, [], [this.createRandomColorTraitByPhenotype(1)], location);
         }
       }
     }
-    return this.setProperty(allRabbits, "mating chance", -.005 * this.numRabbits + .25);
+
+    // Reproduction rates go to zero when the population reaches a 'carrying capacity' of 50
+    this.setProperty(allRabbits, "mating chance", -.005 * this.numRabbits + .25);
+
+    if (this.addedRabbits && this.addedHawks) {
+      allRabbits.forEach((rabbit) => {
+        if (rabbit.get('color') !== this.envColors[location.index]) {
+          // Reduce the carrying capacity to 10 if rabbits are vulnerable to a predator
+          rabbit.set('mating chance', -.025 * this.numRabbits + .25);
+        }
+      })
+    }
   },
   copyRandomColorTrait: function(allRabbits) {
     var alleleString, randomRabbit;
@@ -725,7 +736,7 @@ function createModel() { return ({
     }
     this.setProperty(allHawks, "is immortal", true);
     this.setProperty(allHawks, "mating desire bonus", -40);
-    return this.setProperty(allHawks, "hunger bonus", 5);
+    return this.setProperty(allHawks, "hunger bonus", 100);
   },
   preload: ["images/agents/rabbits/sandrat-dark.png", "images/agents/rabbits/sandrat-light.png", "images/agents/hawks/hawk.png", "images/environments/white.png", "images/environments/brown.png", "images/environments/brown_brown.png", "images/environments/brown_white.png", "images/environments/white_brown.png", "images/environments/white_white.png"]
 })};

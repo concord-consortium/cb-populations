@@ -529,16 +529,16 @@ function createModel() { return ({
     var switchButton;
     switchButton = document.getElementById('switch-env');
     switchButton.onclick = this.switchColors.bind(this);
-    document.getElementById('view-sex-check').onclick = (function(_this) {
-      return function() {
-        return (<any>window).model.showSex = document.querySelector('#view-sex-check:checked');
-      };
-    })(this);
-    document.getElementById('view-hetero-check').onclick = (function(_this) {
-      return function() {
-        return (<any>window).model.showHetero = document.querySelector('#view-hetero-check:checked');
-      };
-    })(this);
+    const setShowSex = (() => {
+      (<any>window).model.showSex = document.querySelector('#view-sex-check:checked');
+    });
+    const setShowHetero = (() => {
+      (<any>window).model.showSex = document.querySelector('#view-sex-check:checked');
+    });
+    document.getElementById('view-sex-check').onclick = setShowSex;
+    document.getElementById('view-hetero-check').onclick = setShowHetero;
+    setShowSex();
+    setShowHetero();
     document.getElementById("env-controls").style.width = this.envColors.length * 450 + 68 + "px";
     return (<HTMLElement>document.querySelector(".toolbar")).style.left = this.envColors.length * 450 + 10 + "px";
   },
@@ -762,7 +762,7 @@ const DEFAULT_CONFIG: IModelConfig = {
 };
 
 export function patchPrototypes(config: IModelConfig) {
-  Agent.prototype.canBeCarried = function() {
+  Agent.prototype.isInteractive = function() {
     return true;
   };
 
@@ -780,7 +780,7 @@ export function patchPrototypes(config: IModelConfig) {
     if (agent == null) {
       return;
     }
-    if (!agent.canBeCarried()) {
+    if (!agent.isInteractive()) {
       return;
     }
     this.pickUpAgent(agent);
@@ -840,7 +840,7 @@ export function patchPrototypes(config: IModelConfig) {
       return function() {
         const view = render.apply(this);
         const buttonHolder = document.createElement('div');
-        buttonHolder.className = 'backpack-button';
+        buttonHolder.id = 'backpack-button';
         const select = document.createElement('button');
         select.onclick = () => config.addToBackpack(this.agent);
         const label = document.createTextNode('Add to Backpack');
@@ -850,6 +850,22 @@ export function patchPrototypes(config: IModelConfig) {
         return view;
       }
     }(InfoView.prototype.render);
+
+    InfoView.prototype._redraw = function(redraw) {
+      return function() {
+        const view = redraw.apply(this);
+        const backpackButton = document.getElementById('backpack-button')
+        if (backpackButton) {
+          // The info view only renders once, so just hide the backpack button when the selected agent is invalid
+          if (this.agent.isInteractive()) {
+            backpackButton.style.display = 'block';
+          } else {
+            backpackButton.style.display = 'none';
+          }
+        }
+        return view;
+      }
+    }(InfoView.prototype._redraw);
   }
 }
 

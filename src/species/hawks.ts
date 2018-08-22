@@ -7,7 +7,7 @@ class Hawk extends (BasicAnimal as { new(args): any; }) {
     this.label = 'Hawk';
   }
 
-  canBeCarried() {
+  isInteractive() {
     return false;
   };
 }  

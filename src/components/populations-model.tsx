@@ -30,6 +30,7 @@ class PopulationsModel extends React.Component<IProps, IState> {
 
   public componentWillUnmount() {
     reset();
+    document.querySelector("body").style.transform = 'initial';
   }
 
   public render() {

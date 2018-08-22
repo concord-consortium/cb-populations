@@ -15,7 +15,7 @@ class App extends React.Component<IAppProps, IAppState> {
   public render() {
     return (
       <div className="app">
-        <PopulationsModelPanel />
+        <PopulationsModelPanel modelConfig={{addToBackpack: (obj) => console.log(obj)}}/>
         <Attribution />
       </div>
     );

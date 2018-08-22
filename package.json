@@ -1,6 +1,6 @@
 {
   "name": "cb-populations",
-  "version": "0.1.11",
+  "version": "0.1.14",
   "main": "build/dist/libs.js",
   "private": false,
   "homepage": "http://.",

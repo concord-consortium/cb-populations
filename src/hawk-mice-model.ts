@@ -773,10 +773,25 @@ export function patchPrototypes(config: IModelConfig) {
       return console.warn("document doesn't support removeEventListener!");
     }
   }
+
+  // Adds parameter to only return agents that are interactive
+  // Also reverses iteration order to get the *top* agent at a point
+  Environment.prototype.getAgentAt = function(x, y, onlyInteractive) {
+    var agent, _i, _ref;
+    _ref = this.agents;
+    for (_i = _ref.length - 1; _i >= 0; _i--) {
+      agent = _ref[_i];
+      if ((!onlyInteractive || agent.isInteractive()) && agent.getView().contains(x, y)) {
+        return agent;
+      }
+    }
+    return null;
+  };
   
   ToolButton.prototype._states['carry-tool'].mousedown = function(evt) {
     var agent;
-    agent = this.getAgentAt(evt.envX, evt.envY);
+    // Changed to call new getAgentAt function
+    agent = this.getAgentAt(evt.envX, evt.envY, true);
     if (agent == null) {
       return;
     }

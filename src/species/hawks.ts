@@ -7,7 +7,7 @@ class Hawk extends (BasicAnimal as { new(args): any; }) {
     this.label = 'Hawk';
   }
 
-  canBeCarried() {
+  isInteractive() {
     return false;
   };
 }  
@@ -25,7 +25,7 @@ export const Hawks = new Species({
       name: 'prey',
       "default": [
         {
-          name: 'rabbits'
+          name: 'mice'
         }
       ]
     }), 

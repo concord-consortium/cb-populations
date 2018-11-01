@@ -35,8 +35,8 @@
   return allelesOfGene[0];
 };
 
-export const RabbitSpecies = {
-  name: 'Rabbit',
+export const MouseSpecies = {
+  name: 'Mouse',
   chromosomeNames: ['1', '2', 'XY'],
   chromosomeGeneMap: {
     '1': ['B'],

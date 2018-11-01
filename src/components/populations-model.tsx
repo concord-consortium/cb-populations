@@ -1,8 +1,8 @@
 import '../style/App.css';
 import * as React from 'react';
-import { init, reset, patchPrototypes } from '../corn-model';
+import { init, reset, patchPrototypes } from '../hawk-mice-model';
 import { Interactive } from '../populations';
-import { IModelConfig } from '../corn-model';
+import { IModelConfig } from '../hawk-mice-model';
 
 interface IProps {
   modelConfig?: IModelConfig;
@@ -30,6 +30,7 @@ class PopulationsModel extends React.Component<IProps, IState> {
 
   public componentWillUnmount() {
     reset();
+    document.querySelector("body").style.transform = 'initial';
   }
 
   public render() {

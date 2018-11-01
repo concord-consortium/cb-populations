@@ -1,4 +1,4 @@
-import { Rabbits } from './species/rabbits';
+import { Mice } from './species/mice';
 import { Hawks } from './species/hawks';
 import { Agent, Environment, EnvironmentView, Rule, Interactive, Trait, ToolButton, Events, InfoView } from './populations';
 import getSingleEnv from './environments/snow';
@@ -37,7 +37,7 @@ function createModel() { return ({
       speedSlider: false,
       addOrganismButtons: [
         {
-          species: Rabbits,
+          species: Mice,
           imagePath: require("./images/sandrat-light.png"),
           traits: [],
           limit: -1,
@@ -62,7 +62,7 @@ function createModel() { return ({
     this.env = env;
     this.env.setBackground(require("./images/environments/" + this.envColors.join("_") + ".png"));
     this.hawkSpecies = Hawks;
-    this.rabbitSpecies = Rabbits;
+    this.mouseSpecies = Mice;
     numEnvs = this.envColors.length;
     labs = [];
     fields = [];
@@ -103,7 +103,7 @@ function createModel() { return ({
       action: (function(_this) {
         return function(agent) {
           var brownness, envIndex;
-          if (agent.species === _this.rabbitSpecies) {
+          if (agent.species === _this.mouseSpecies) {
             const envColor = _this.envColors[_this.getAgentEnvironmentIndex(agent)];
             brownness = envColor === 'white'
               ? brownness = 0
@@ -123,11 +123,11 @@ function createModel() { return ({
       action: (function(_this) {
         return function(agent) {
           var envIndex, overcrowded, population;
-          if (agent.species === _this.rabbitSpecies) {
+          if (agent.species === _this.mouseSpecies) {
             if (agent._y < _this.env.height / 4) {
               agent.set("is immortal", true);
               envIndex = _this.getAgentEnvironmentIndex(agent);
-              population = _this.countRabbitsInArea(_this.locations.labs[envIndex]);
+              population = _this.countMiceInArea(_this.locations.labs[envIndex]);
               overcrowded = population > 10;
               if (overcrowded) {
                 agent.set("max offspring", 0);
@@ -160,7 +160,7 @@ function createModel() { return ({
       colors = that.getStartingColors(numMice, config);
       for (i = k = 0, ref = that.envColors.length; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
         for (j = l = 0, ref1 = numMice; 0 <= ref1 ? l < ref1 : l > ref1; j = 0 <= ref1 ? ++l : --l) {
-          that.addAgent(that.rabbitSpecies, [], [
+          that.addAgent(that.mouseSpecies, [], [
             new Trait({
               name: "mating desire bonus",
               "default": -20
@@ -189,7 +189,7 @@ function createModel() { return ({
       return function() {
         (<any>window).model.setupEnvironment(config);
         _this.addedHawks = false;
-        return _this.addedRabbits = false;
+        return _this.addedMice = false;
       };
     })(this));
   },
@@ -269,9 +269,9 @@ function createModel() { return ({
     this.graphData = {};
     this.graphs = {};
     this.graphZooms = this.envColors.map(() => 'recent');
-    this.createGraphForEnvs("Mouse Colors", "Time (days)", "Number of Mice", ["#999999", "#995500"], ["Light mice", "Dark mice"], "color-graph", this.graphRabbitColors, "graph-colors", ["graph-alleles", "graph-genotypes"]);
-    this.createGraphForEnvs("Mouse Genotypes", "Time (days)", "Number of Mice", ["#F2CB7C","#AAAAAA", "#555555"], ["bb mice", "bB mice", "BB mice"], "genotype-graph", this.graphRabbitGenotypes, "graph-genotypes", ["graph-alleles", "graph-colors"]);
-    this.createGraphForEnvs("Mouse Alleles", "Time (days)", "Number of Alleles", ["#999999", "#995500"], ["b alleles", "B alleles"], "allele-graph", this.graphRabbitAlleles, "graph-alleles", ["graph-colors", "graph-genotypes"]);
+    this.createGraphForEnvs("Mouse Colors", "Time (days)", "Number of Mice", ["#999999", "#995500"], ["Light mice", "Dark mice"], "color-graph", this.graphMouseColors, "graph-colors", ["graph-alleles", "graph-genotypes"]);
+    this.createGraphForEnvs("Mouse Genotypes", "Time (days)", "Number of Mice", ["#F2CB7C","#AAAAAA", "#555555"], ["bb mice", "bB mice", "BB mice"], "genotype-graph", this.graphMouseGenotypes, "graph-genotypes", ["graph-alleles", "graph-colors"]);
+    this.createGraphForEnvs("Mouse Alleles", "Time (days)", "Number of Alleles", ["#999999", "#995500"], ["b alleles", "B alleles"], "allele-graph", this.graphMouseAlleles, "graph-alleles", ["graph-colors", "graph-genotypes"]);
     return document.getElementById("graph-colors").click();
   },
   createGraphForEnvs: function(title, xLabel, yLabel, colors, seriesNames, graphId, counter, showButton, hideButtons) {
@@ -436,44 +436,44 @@ function createModel() { return ({
     }
     return set;
   },
-  countRabbitsInArea: function(rectangle) {
-    var a, rabbits;
-    rabbits = (function() {
+  countMiceInArea: function(rectangle) {
+    var a, mice;
+    mice = (function() {
       var k, len, ref, results;
       ref = this.env.agentsWithin(rectangle);
       results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         a = ref[k];
-        if (a.species === this.rabbitSpecies) {
+        if (a.species === this.mouseSpecies) {
           results.push(a);
         }
       }
       return results;
     }).call(this);
-    return rabbits.length;
+    return mice.length;
   },
-  graphRabbitColors: function(location) {
-    var a, brownRabbits, k, len, ref, whiteRabbits;
-    whiteRabbits = 0;
-    brownRabbits = 0;
-    ref = this.agentsOfSpeciesInRect(this.rabbitSpecies, location);
+  graphMouseColors: function(location) {
+    var a, brownMice, k, len, ref, whiteMice;
+    whiteMice = 0;
+    brownMice = 0;
+    ref = this.agentsOfSpeciesInRect(this.mouseSpecies, location);
     for (k = 0, len = ref.length; k < len; k++) {
       a = ref[k];
       if (a.get('color') === 'white') {
-        whiteRabbits++;
+        whiteMice++;
       }
       if (a.get('color') === 'brown') {
-        brownRabbits++;
+        brownMice++;
       }
     }
-    return [whiteRabbits, brownRabbits];
+    return [whiteMice, brownMice];
   },
-  graphRabbitGenotypes: function(location) {
+  graphMouseGenotypes: function(location) {
     var BB, a, bB, bb, k, len, ref;
     bb = 0;
     bB = 0;
     BB = 0;
-    ref = this.agentsOfSpeciesInRect(this.rabbitSpecies, location);
+    ref = this.agentsOfSpeciesInRect(this.mouseSpecies, location);
     for (k = 0, len = ref.length; k < len; k++) {
       a = ref[k];
       if (a.alleles.color === "a:b,b:b") {
@@ -491,11 +491,11 @@ function createModel() { return ({
     }
     return [bb, bB, BB];
   },
-  graphRabbitAlleles: function(location) {
+  graphMouseAlleles: function(location) {
     var a, count_B, count_b, k, len, ref;
     count_b = 0;
     count_B = 0;
-    ref = this.agentsOfSpeciesInRect(this.rabbitSpecies, location);
+    ref = this.agentsOfSpeciesInRect(this.mouseSpecies, location);
     for (k = 0, len = ref.length; k < len; k++) {
       a = ref[k];
       if (a.alleles.color.indexOf("a:b") > -1) {
@@ -529,16 +529,16 @@ function createModel() { return ({
     var switchButton;
     switchButton = document.getElementById('switch-env');
     switchButton.onclick = this.switchColors.bind(this);
-    document.getElementById('view-sex-check').onclick = (function(_this) {
-      return function() {
-        return (<any>window).model.showSex = document.querySelector('#view-sex-check:checked');
-      };
-    })(this);
-    document.getElementById('view-hetero-check').onclick = (function(_this) {
-      return function() {
-        return (<any>window).model.showHetero = document.querySelector('#view-hetero-check:checked');
-      };
-    })(this);
+    const setShowSex = (() => {
+      (<any>window).model.showSex = document.querySelector('#view-sex-check:checked');
+    });
+    const setShowHetero = (() => {
+      (<any>window).model.showSex = document.querySelector('#view-sex-check:checked');
+    });
+    document.getElementById('view-sex-check').onclick = setShowSex;
+    document.getElementById('view-hetero-check').onclick = setShowHetero;
+    setShowSex();
+    setShowHetero();
     document.getElementById("env-controls").style.width = this.envColors.length * 450 + 68 + "px";
     return (<HTMLElement>document.querySelector(".toolbar")).style.left = this.envColors.length * 450 + 10 + "px";
   },
@@ -548,7 +548,7 @@ function createModel() { return ({
         var i, k, ref, results;
         results = [];
         for (i = k = 0, ref = _this.envColors.length; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
-          _this.checkRabbits(_this.locations.fields[i]);
+          _this.checkMice(_this.locations.fields[i]);
           results.push(_this.checkHawks(_this.locations.fields[i]));
         }
         return results;
@@ -621,53 +621,64 @@ function createModel() { return ({
     }
     return this.env.addAgent(agent);
   },
-  addedRabbits: false,
+  addedMice: false,
   addedHawks: false,
-  numRabbits: 0,
-  checkRabbits: function(location) {
-    var allRabbits, i, k;
-    allRabbits = this.agentsOfSpeciesInRect(this.rabbitSpecies, location);
-    this.numRabbits = allRabbits.length;
-    if (!this.addedRabbits && this.numRabbits > 0) {
-      this.addedRabbits = true;
+  numMice: 0,
+  checkMice: function(location) {
+    var allMice, i, k;
+    allMice = this.agentsOfSpeciesInRect(this.mouseSpecies, location);
+    this.numMice = allMice.length;
+    if (!this.addedMice && this.numMice > 0) {
+      this.addedMice = true;
     }
-    if (this.addedRabbits && this.numRabbits < 5) {
+    if (this.addedMice && this.numMice < 5) {
       for (let i = 0; i < 4; i++) {
-        this.addAgent(this.rabbitSpecies, [], [this.copyRandomColorTrait(allRabbits)], location);
+        this.addAgent(this.mouseSpecies, [], [this.copyRandomColorTrait(allMice)], location);
       }
     }
 
     // If there are no specific selective pressures (ie there are no hawks, or the hawks eat 
     // everything with equal probability), the population should be 'stabilized', so that no
-    // color of rabbit dies out completely
-    if (this.addedRabbits && (!this.addedHawks || this.envColors[location.index] === 'neutral')) {
+    // color of mouse dies out completely
+    if (this.addedMice && (!this.addedHawks || this.envColors[location.index] === 'neutral')) {
       let numWhite = 0;
-      allRabbits.forEach((rabbit) => {
-        if (rabbit.get('color') === 'white') {
+      allMice.forEach((mouse) => {
+        if (mouse.get('color') === 'white') {
           numWhite++;
         }
       });
 
-      // Make sure there are *some* white rabbits to ensure white rabbits are possible
+      // Make sure there are *some* white mice to ensure white mice are possible
       if (numWhite > 0 && numWhite < 10) {
         for (let i = 0; i < 3; i++) {
-          this.addAgent(this.rabbitSpecies, [], this.createRandomColorTraitByPhenotype(0), location);
+          this.addAgent(this.mouseSpecies, [], [this.createRandomColorTraitByPhenotype(0)], location);
         }
       }
 
-      const numBrown = allRabbits - numWhite;
+      const numBrown = allMice.length - numWhite;
       if (numBrown > 0 && numBrown < 10) {
         for (let i = 0; i < 3; i++) {
-          this.addAgent(this.rabbitSpecies, [], this.createRandomColorTraitByPhenotype(1), location);
+          this.addAgent(this.mouseSpecies, [], [this.createRandomColorTraitByPhenotype(1)], location);
         }
       }
     }
-    return this.setProperty(allRabbits, "mating chance", -.005 * this.numRabbits + .25);
+
+    // Reproduction rates go to zero when the population reaches a 'carrying capacity' of 50
+    this.setProperty(allMice, "mating chance", -.005 * this.numMice + .25);
+
+    if (this.addedMice && this.addedHawks) {
+      allMice.forEach((mouse) => {
+        if (mouse.get('color') !== this.envColors[location.index]) {
+          // Reduce the carrying capacity to 10 if mice are vulnerable to a predator
+          mouse.set('mating chance', -.025 * this.numMice + .25);
+        }
+      })
+    }
   },
-  copyRandomColorTrait: function(allRabbits) {
-    var alleleString, randomRabbit;
-    randomRabbit = allRabbits[Math.floor(Math.random() * allRabbits.length)];
-    alleleString = randomRabbit.organism.alleles;
+  copyRandomColorTrait: function(allMice) {
+    var alleleString, randomMouse;
+    randomMouse = allMice[Math.floor(Math.random() * allMice.length)];
+    alleleString = randomMouse.organism.alleles;
     return new Trait({
       name: "color",
       "default": alleleString,
@@ -725,9 +736,9 @@ function createModel() { return ({
     }
     this.setProperty(allHawks, "is immortal", true);
     this.setProperty(allHawks, "mating desire bonus", -40);
-    return this.setProperty(allHawks, "hunger bonus", 5);
+    return this.setProperty(allHawks, "hunger bonus", 100);
   },
-  preload: ["images/agents/rabbits/sandrat-dark.png", "images/agents/rabbits/sandrat-light.png", "images/agents/hawks/hawk.png", "images/environments/white.png", "images/environments/brown.png", "images/environments/brown_brown.png", "images/environments/brown_white.png", "images/environments/white_brown.png", "images/environments/white_white.png"]
+  preload: ["images/sandrat-dark.png", "images/sandrat-light.png", "images/hawk.png", "images/environments/white.png", "images/environments/brown.png", "images/environments/brown_brown.png", "images/environments/brown_white.png", "images/environments/white_brown.png", "images/environments/white_white.png"]
 })};
 
 export interface IModelConfig {
@@ -751,7 +762,7 @@ const DEFAULT_CONFIG: IModelConfig = {
 };
 
 export function patchPrototypes(config: IModelConfig) {
-  Agent.prototype.canBeCarried = function() {
+  Agent.prototype.isInteractive = function() {
     return true;
   };
 
@@ -762,14 +773,29 @@ export function patchPrototypes(config: IModelConfig) {
       return console.warn("document doesn't support removeEventListener!");
     }
   }
+
+  // Adds parameter to only return agents that are interactive
+  // Also reverses iteration order to get the *top* agent at a point
+  Environment.prototype.getAgentAt = function(x, y, onlyInteractive) {
+    var agent, _i, _ref;
+    _ref = this.agents;
+    for (_i = _ref.length - 1; _i >= 0; _i--) {
+      agent = _ref[_i];
+      if ((!onlyInteractive || agent.isInteractive()) && agent.getView().contains(x, y)) {
+        return agent;
+      }
+    }
+    return null;
+  };
   
   ToolButton.prototype._states['carry-tool'].mousedown = function(evt) {
     var agent;
-    agent = this.getAgentAt(evt.envX, evt.envY);
+    // Changed to call new getAgentAt function
+    agent = this.getAgentAt(evt.envX, evt.envY, true);
     if (agent == null) {
       return;
     }
-    if (!agent.canBeCarried()) {
+    if (!agent.isInteractive()) {
       return;
     }
     this.pickUpAgent(agent);
@@ -829,7 +855,7 @@ export function patchPrototypes(config: IModelConfig) {
       return function() {
         const view = render.apply(this);
         const buttonHolder = document.createElement('div');
-        buttonHolder.className = 'backpack-button';
+        buttonHolder.id = 'backpack-button';
         const select = document.createElement('button');
         select.onclick = () => config.addToBackpack(this.agent);
         const label = document.createTextNode('Add to Backpack');
@@ -839,6 +865,22 @@ export function patchPrototypes(config: IModelConfig) {
         return view;
       }
     }(InfoView.prototype.render);
+
+    InfoView.prototype._redraw = function(redraw) {
+      return function() {
+        const view = redraw.apply(this);
+        const backpackButton = document.getElementById('backpack-button')
+        if (backpackButton) {
+          // The info view only renders once, so just hide the backpack button when the selected agent is invalid
+          if (this.agent.isInteractive()) {
+            backpackButton.style.display = 'block';
+          } else {
+            backpackButton.style.display = 'none';
+          }
+        }
+        return view;
+      }
+    }(InfoView.prototype._redraw);
   }
 }
 

@@ -52,7 +52,7 @@ declare namespace Populations {
   
     zIndex(): number;
 
-    canBeCarried(): boolean;
+    isInteractive(): boolean;
   }
 
   export interface AgentDistance {

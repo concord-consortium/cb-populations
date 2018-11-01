@@ -23,10 +23,13 @@ function createModel() { return ({
     this.controlType = controlTypeParam ? controlTypeParam : 'color';
     if (this.popControl === "user") {
       if (this.controlType === "color") {
-        return (<HTMLElement>document.querySelector("#color-controls")).hidden = false;
+        (<HTMLElement>document.querySelector("#color-controls")).hidden = false;
       } else {
-        return (<HTMLElement>document.querySelector("#genome-controls")).hidden = false;
+        (<HTMLElement>document.querySelector("#genome-controls")).hidden = false;
       }
+    }
+    if (this.getParameter('hideHeteroCheck', config) === 'true') {
+      (<HTMLElement>document.querySelector("#view-hetero")).hidden = true;
     }
   },
   run: function(config: IModelConfig) {
@@ -107,7 +110,7 @@ function createModel() { return ({
             const envColor = _this.envColors[_this.getAgentEnvironmentIndex(agent)];
             brownness = envColor === 'white'
               ? brownness = 0
-              : envColor === 'neutral' 
+              : envColor === 'neutral'
                 ? brownness = .5
                 : brownness = 1
             if (agent.get('color') === 'brown') {
@@ -638,7 +641,7 @@ function createModel() { return ({
       }
     }
 
-    // If there are no specific selective pressures (ie there are no hawks, or the hawks eat 
+    // If there are no specific selective pressures (ie there are no hawks, or the hawks eat
     // everything with equal probability), the population should be 'stabilized', so that no
     // color of mouse dies out completely
     if (this.addedMice && (!this.addedHawks || this.envColors[location.index] === 'neutral')) {
@@ -749,6 +752,7 @@ export interface IModelConfig {
   showSwitch?: boolean;
   popControl?: string;
   controlType?: string;
+  hideHeteroCheck?: boolean;
 
   addToBackpack?: (mouse) => void;
 }
@@ -788,7 +792,7 @@ export function patchPrototypes(config: IModelConfig) {
     }
     return null;
   };
-  
+
   ToolButton.prototype._states['carry-tool'].mousedown = function(evt) {
     var agent;
     // Changed to call new getAgentAt function
@@ -807,7 +811,7 @@ export function patchPrototypes(config: IModelConfig) {
     };
     return this._agentOrigin = agent.getLocation();
   };
-  
+
   Environment.prototype.randomLocationWithin = function(left, top, width, height, avoidBarriers) {
     var point;
     if (avoidBarriers == null) {
@@ -825,7 +829,7 @@ export function patchPrototypes(config: IModelConfig) {
     }
     return point;
   };
-  
+
   EnvironmentView.prototype.addMouseHandlers = function() {
     var eventName, k, len, ref, results;
     ref = ["click", "mousedown", "mouseup", "mousemove", "touchstart", "touchmove", "touchend"];
@@ -850,7 +854,7 @@ export function patchPrototypes(config: IModelConfig) {
     }
     return results;
   };
-  
+
   if (config && config.addToBackpack) {
     InfoView.prototype.render = function(render) {
       return function() {
@@ -903,7 +907,7 @@ export function reset(config?: IModelConfig) {
   const model = (window as any).model;
   model.eventListeners.forEach((listener) => (listener.target).removeEventListener(listener.type, listener.callback));
   model.interactive.reset();
-  
+
   document.getElementById('environment').innerHTML = '';
   document.getElementById('graphs').innerHTML = '';
 }

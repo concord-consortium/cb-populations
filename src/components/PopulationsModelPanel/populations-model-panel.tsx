@@ -30,7 +30,10 @@ export default class PopulationsModelPanel extends React.Component<IProps, IStat
           <div id="overlay-controls">
             <input id="view-sex-check" type="checkbox" />Show males and females
             <img className="overlay-icon" src={require("../../images/overlays/male-female-stack.png")} />
-            <input id="view-hetero-check" type="checkbox" />Show heterozygotes
+            <label id="view-hetero">
+              <input id="view-hetero-check" type="checkbox" />
+              Show heterozygotes
+            </label>
             <img className="overlay-icon" src={require("../../images/overlays/heterozygous-icon.png")} />
           </div>
         </div>

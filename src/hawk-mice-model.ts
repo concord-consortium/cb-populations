@@ -241,7 +241,8 @@ function createModel() { return ({
     return colors;
   },
   getParameter: function(key: string, config?: IModelConfig, forceArray: boolean = false) {
-    return config ? this.getConfigParameter(key, config) : this.getURLParameter(key, forceArray);
+    const urlParam = this.getURLParameter(key, forceArray);
+    return urlParam !== "undefined" ? urlParam : config ? this.getConfigParameter(key, config) : null;
   },
   getURLParameter: function(key: string, forceArray: boolean = false) {
     var k, len, paramKey, paramVal, query, raw_vars, ref, v, value;

@@ -35,6 +35,22 @@ function createModel() { return ({
   run: function(config: IModelConfig) {
     var env, fieldHeight, fieldY, fields, i, k, labHeight, labY, labs, numEnvs, ref, width, x;
     env = this.envColors.length === 1 ? getSingleEnv() : getDoubleEnv();
+    let toolbarButtons;
+    if (this.getParameter('hideInfoTool', config) === 'true') {
+      toolbarButtons = [
+        {
+          type: ToolButton.CARRY_TOOL
+        }
+      ];
+    } else {
+      toolbarButtons = [
+        {
+          type: ToolButton.INFO_TOOL
+        }, {
+          type: ToolButton.CARRY_TOOL
+        }
+      ];
+    }
     this.interactive = new Interactive({
       environment: env,
       speedSlider: false,
@@ -53,13 +69,7 @@ function createModel() { return ({
           scatter: true
         }
       ],
-      toolButtons: [
-        {
-          type: ToolButton.INFO_TOOL
-        }, {
-          type: ToolButton.CARRY_TOOL
-        }
-      ]
+      toolButtons: toolbarButtons
     });
     document.getElementById('environment').appendChild(this.interactive.getEnvironmentPane());
     this.env = env;
@@ -518,8 +528,13 @@ function createModel() { return ({
   switchColors: function() {
     if (this.envColors.length === 1) {
       if (this.envColors[0] === "white") {
-        this.envColors[0] = "neutral";
-        return this.env.setBackground(require("./images/environments/neutral.png"));
+        if (this.getParameter('showNeutral') === 'false') {
+          this.envColors[0] = "brown";
+          return this.env.setBackground(require("./images/environments/brown.png"));
+        } else {
+          this.envColors[0] = "neutral";
+          return this.env.setBackground(require("./images/environments/neutral.png"));
+        }
       } else if (this.envColors[0] === "neutral") {
         this.envColors[0] = "brown";
         return this.env.setBackground(require("./images/environments/brown.png"));
@@ -753,6 +768,7 @@ export interface IModelConfig {
   popControl?: string;
   controlType?: string;
   hideHeteroCheck?: boolean;
+  hideInfoTool?: boolean;
 
   addToBackpack?: (mouse) => void;
 }
@@ -765,6 +781,7 @@ const DEFAULT_CONFIG: IModelConfig = {
   popControl: 'author',
   controlType: 'genotype',
   hideHeteroCheck: false,
+  hideInfoTool: false
 };
 
 export function patchPrototypes(config: IModelConfig) {

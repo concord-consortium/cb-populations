@@ -560,7 +560,7 @@ function createModel() { return ({
       (<any>window).model.showSex = document.querySelector('#view-sex-check:checked');
     });
     const setShowHetero = (() => {
-      (<any>window).model.showSex = document.querySelector('#view-sex-check:checked');
+      (<any>window).model.showHetero = document.querySelector('#view-hetero-check:checked');
     });
     document.getElementById('view-sex-check').onclick = setShowSex;
     document.getElementById('view-hetero-check').onclick = setShowHetero;

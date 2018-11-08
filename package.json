@@ -3,7 +3,7 @@
   "version": "0.1.14",
   "main": "build/dist/libs.js",
   "private": false,
-  "homepage": "http://.",
+  "homepage": "https://concord-consortium.github.io/cb-populations/",
   "dependencies": {
     "@blueprintjs/core": "^2.3.1",
     "autoprefixer": "7.1.6",
@@ -20,6 +20,7 @@
     "file-loader": "0.11.2",
     "fork-ts-checker-webpack-plugin": "^0.2.8",
     "fs-extra": "3.0.1",
+    "gh-pages": "^2.0.1",
     "html-webpack-plugin": "2.29.0",
     "jest": "22.1.4",
     "lodash": "^4.17.10",
@@ -56,10 +57,12 @@
     "lint:fix": "tslint --project . --fix",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "lib": "rm -rf build/ && tsc -p tsconfig.json && cp -r src/images/* build/dist/images && mkdir build/dist/style && cp -r src/style/* build/dist/style" ,
+    "lib": "rm -rf build/ && tsc -p tsconfig.json && cp -r src/images/* build/dist/images && mkdir build/dist/style && cp -r src/style/* build/dist/style",
     "pretest": "npm run lint",
     "test": "node scripts/test.js --env=jsdom",
-    "test:ci": "CI=true npm test"
+    "test:ci": "CI=true npm test",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
     "@types/clipboard": "^2.0.0",

@@ -22,6 +22,17 @@ export default class PopulationsModelPanel extends React.Component<IProps, IStat
           % Bb: <input id="starting-Bb" value={25} />
           % bb: <input id="starting-bb" value={50} />
         </div>
+        <div id="hawks-controls" hidden={true}>
+          Number of hawks:
+          <input defaultValue="2" min="1" max="4" id="num-hawks" name="rangeslider" type="range" list="steplist" />
+          <datalist id="steplist">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+          </datalist>
+          <span id="num-hawks-text">2</span>
+        </div>
         {populationsModel}
         <div id="env-controls">
           <div id="switch-controls" hidden={true}>

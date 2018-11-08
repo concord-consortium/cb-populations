@@ -31,6 +31,13 @@ function createModel() { return ({
     if (this.getParameter('hideHeteroCheck', config) === 'true') {
       (<HTMLElement>document.querySelector("#view-hetero")).hidden = true;
     }
+    if (this.getParameter('showNumHawks', config) === 'true') {
+      (<HTMLElement>document.querySelector("#hawks-controls")).hidden = false;
+      $(document).on('input', '#num-hawks', function() {
+        console.log("change!", $(this).val())
+        $("#num-hawks-text").text(($(this).val() as string));
+      });
+    }
   },
   run: function(config: IModelConfig) {
     var env, fieldHeight, fieldY, fields, i, k, labHeight, labY, labs, numEnvs, ref, width, x;
@@ -189,7 +196,8 @@ function createModel() { return ({
     buttons[1].parentNode.onclick = function() {
       var i, k, ref;
       for (i = k = 0, ref = that.envColors.length; 0 <= ref ? k < ref : k > ref; i = 0 <= ref ? ++k : --k) {
-        that.addAgents(2, that.hawkSpecies, [], [
+        const numHawks = + (document.getElementById("num-hawks") as any).value;
+        that.addAgents(numHawks, that.hawkSpecies, [], [
           new Trait({
             name: "mating desire bonus",
             "default": -40

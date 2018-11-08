@@ -764,6 +764,7 @@ const DEFAULT_CONFIG: IModelConfig = {
   showSwitch: false,
   popControl: 'author',
   controlType: 'genotype',
+  hideHeteroCheck: false,
 };
 
 export function patchPrototypes(config: IModelConfig) {

@@ -33,8 +33,8 @@ export default class PopulationsModelPanel extends React.Component<IProps, IStat
             <label id="view-hetero">
               <input id="view-hetero-check" type="checkbox" />
               Show heterozygotes
+              <img className="overlay-icon" src={require("../../images/overlays/heterozygous-icon.png")} />
             </label>
-            <img className="overlay-icon" src={require("../../images/overlays/heterozygous-icon.png")} />
           </div>
         </div>
         <div id="graph-controls">
